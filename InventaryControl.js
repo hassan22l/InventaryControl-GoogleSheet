@@ -49,13 +49,11 @@ function borrarProducto() {
 
 
 
-
 function guardarEntrada() {
 
   var libro = SpreadsheetApp.getActiveSpreadsheet();
   var hojaCompras = libro.getSheetByName("Compras")
   var hojaHistorial = libro.getSheetByName("Info.Compras")
-
 
   var codigo = hojaCompras.getRange("C5").getValue();
   var nombre = hojaCompras.getRange("C7").getValue();
@@ -67,28 +65,34 @@ function guardarEntrada() {
 
   hojaHistorial.appendRow([codigo, nombre, cantidad, precio, precioVenta, proveedor, fecha])
 
-  // Actualización de Costo y Precio de Venta en Hoja de Productos
+ // Actualización de Costo por porcentaje en Hoja de Productos
 
-  var hojaProductosInfo = libro.getSheetByName("Productos.Info")
-  var dataProductos = hojaProductosInfo.getDataRange().getValues();
-  var costoYVentaActualizados = false;
+      var hojaCompras = libro.getSheetByName("Compras");
+      var hojaProductos = libro.getSheetByName("Productos.Info")
+      var productos = hojaProductos.getDataRange().getValues();
+      var aumento = hojaCompras.getRange("F7").getValue();
 
-  for (var i = 1; i < dataProductos.length; i++) {
-    if (dataProductos[i][0] === codigo) {
-      if (precio !== 0 && precio !== "") { // Solo actualiza si el precio no es igual a 0 ni está vacío
-        if (dataProductos[i][1] !== precio || dataProductos[i][2] !== precioVenta) {
-          hojaProductosInfo.getRange(i + 1, 4).setValue(precio);
-          hojaProductosInfo.getRange(i + 1, 5).setValue(precioVenta); 
-          costoYVentaActualizados = true;
-        }
+    if (isNaN(aumento) || aumento === "") {
+        Logger.log("No se proporcionó un número en la celda 'Aumentar'. Los precios permanecerán sin cambios.");
+        return;
       }
 
-      break;
-    }
-  }
-  // Actualizacion de Stock
-    var hojaStock = libro.getSheetByName("Stock")
-    var dataStock = hojaStock.getDataRange().getValues();
+    for(var i = 1; i <productos.length; i++) {
+        var marca = productos[i][8]
+        var marcaACambiar = hojaCompras.getRange("D3").getValue()
+
+          if (marcaACambiar === marca){
+            
+              var precioActual = productos[i] [3];
+              var nuevoPrecio = precioActual * (1 + aumento / 100);
+              hojaProductos.getRange(i+ 1, 4).setValue(nuevoPrecio);
+          }
+      }
+
+
+
+     var hojaStock = libro.getSheetByName("Stock")
+      var dataStock = hojaStock.getDataRange().getValues();
 
       for (var i = 1; i < dataStock.length; i++) {
         if (dataStock[i][0] === codigo) {
