@@ -183,34 +183,30 @@ function buscarProductoPorFiltro() {
   var hojaProductos = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Productos.Info');
   var hojaBusqueda = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Buscar');
 
-  var valorBuscado = hojaBusqueda.getRange('B4').getValue(); // Supongamos que el valor de búsqueda se encuentra en la celda A1 de la hoja "Buscar Productos".
+  var valorBuscado = hojaBusqueda.getRange('B4').getValue(); 
 
-  // Obtén los datos de la hoja de productos.
   var datosProductos = hojaProductos.getDataRange().getValues();
 
   for (var i = 0; i < datosProductos.length; i++) {
     var auto = datosProductos[i][3]; 
 
     if (auto.toString().toLowerCase() === valorBuscado.toString().toLowerCase()) {
-      // Si se encuentra una coincidencia, muestra los datos en la hoja de búsqueda.
+     
       var codigo = datosProductos[i][0];
       var nombre = datosProductos[i][1];
-      var precio = datosProductos[i][5]; // Supongamos que el precio está en la quita columna.
-      var equivalencia = datosProductos[i][6]; // Supongamos que la equivalencia está en la sexta columna.
-      var descripcion = datosProductos[i][3]; // Supongamos que la descripción está en la tercera columna.
-
-      // Llena los datos en la hoja de búsqueda.
+      var precio = datosProductos[i][5]; 
+      var equivalencia = datosProductos[i][6]; 
+      var descripcion = datosProductos[i][3]; 
+      
       hojaBusqueda.getRange('D2').setValue(codigo);
       hojaBusqueda.getRange('D3').setValue(nombre);
       hojaBusqueda.getRange('D7').setValue(precio);
       hojaBusqueda.getRange('D5').setValue(equivalencia);
       hojaBusqueda.getRange('D4').setValue(descripcion);
 
-      return; // Sal del bucle una vez que se haya encontrado una coincidencia.
+      return; 
     }
   }
-
-  // Si no se encontró una coincidencia, puedes mostrar un mensaje de error.
-  hojaBusqueda.getRange('D2:D6').clearContent(); // Borra los datos anteriores.
+  hojaBusqueda.getRange('D2:D6').clearContent(); 
   hojaBusqueda.getRange('B5').setValue('Producto no encontrado');
 }
